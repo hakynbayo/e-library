@@ -1,32 +1,27 @@
 const express = require('express');
-const dbConnect = require('./config/dbConnect');
-const usersRoute = require('./routes/usersRoute')
-const error = require('./middlewares/errorhandlers')
 const dotenv = require('dotenv');
+const error = require('./middlewares/errorMiddlewareHandler');
+const usersRoute = require('./routes/usersRoute');
+const bookRouter = require('./routes/bookRoutes');
+dotenv.config();
+require('./config/dbConnect')();
+
 const app = express();
 
-
-// config   
-dotenv.config();
-
-// Body parser middleware
+//Passing body data
 app.use(express.json());
 
-// Connect to DB
-dbConnect();
-
-
-//Routes 
+//Routes
+//Users
 app.use('/api/users', usersRoute);
+//Books
+app.use('/api/books', bookRouter);
 
+//Error middleware
+app.use(error.errorMiddlewareHandler);
 
-//error midware
-app.use(error.errorHandler);
-
-
-// Server
-
+//Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, ()=>{
-    console.log(`server is running on port ${PORT}`)
-})
+app.listen(PORT, () => {
+  console.log(`Server is up and runing ${PORT}`);
+});
